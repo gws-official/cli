@@ -1,0 +1,41 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"os"
+
+	"github.com/gws-official/cli"
+)
+
+func main() {
+	app := cli.New("tool").
+		Description("A small CLI tool")
+
+	app.Command("greet").
+		Description("Greet someone").
+		Flag("name", cli.FlagOptions{
+			Alias:       "n",
+			Type:        cli.StringFlag,
+			Description: "Name to greet",
+			Required:    true,
+		}).
+		Flag("times", cli.FlagOptions{
+			Alias:       "t",
+			Type:        cli.IntFlag,
+			Description: "Number of greetings",
+			Default:     1,
+		}).
+		Do(func(ctx context.Context, c *cli.Context) error {
+			name := c.Flags["name"].(string)
+			times := c.Flags["times"].(int)
+
+			for i := 0; i < times; i++ {
+				fmt.Println("Hello", name)
+			}
+
+			return nil
+		})
+
+	os.Exit(app.Run(os.Args[1:]))
+}
